@@ -10,18 +10,16 @@ let numbers = [
 // console.log(resultsEven);
 // console.log(resultsOdd);
 
-let resultsMap = numbers.map ( 
-    (num) => {
-        return num.map(  
-            (num) => {return num*2} 
-        )     
-    });
+// let resultsMap = numbers.map ( 
+//     (num) => {
+//         return num.map(  
+//             (num) => {return num*2} 
+//         )     
+//     });
 
-console.log(resultsMap);
+// console.log(resultsMap);
 
 // the game //
-
-
 
 
 function Gameboard() {
@@ -42,7 +40,16 @@ function Gameboard() {
 
     const getBoard = () => board;
 
-    const getRows = () => console.log(rows);
+    const addMarker = (col, row, player) => {
+        row--;
+        col--;
+
+        if (board[row][col].getValue() === "") {
+            board[row][col].setValue(player);
+        } else {
+            console.log("Can't play your mark here!");
+        }
+    }
 
     const printBoard = () => {
         const printedBoard = board.map((row) => {
@@ -55,7 +62,7 @@ function Gameboard() {
 
     return {
         getBoard,
-        getRows,
+        addMarker,
         printBoard,
     }
 
@@ -66,8 +73,8 @@ function Cell() {
     let value = "";
 
     // Add function to update value with an X or O
-    const setValue = (playerValue) => {
-        value = playerValue; 
+    const setValue = (player) => {
+        value = player; 
     }
 
     // Add function to retrive the value from this cell
@@ -85,13 +92,55 @@ function GameController(
     playerTwoName = "Player Two"
 ) {
 
+    const players = [
+        {
+            name: playerOneName,
+            marker: "X",
+        },
+        {
+            name: playerTwoName,
+            marker: "O",
+        }
+    ]
 
+    const board = Gameboard();
 
+    let activePlayer = players[0];
+
+    const switchActivePlayer = () => {
+        activePlayer = activePlayer === players[0] ? players[1] : players[0];
+    }
+    const getActivePlayer = () => activePlayer;
+
+    const printNewRound = () => {
+        board.printBoard();
+        console.log(`${getActivePlayer().name}'s turn.`);
+    }
+
+    const playRound = (col, row) => {
+
+        let marker = getActivePlayer().marker;
+
+        board.addMarker(col, row, marker);
+
+        console.log(`${getActivePlayer().name} plays row ${row}, column ${col}.`);
+
+        board.printBoard();
+
+        switchActivePlayer();
+
+        console.log(`${getActivePlayer().name}'s turn.`);
+    }
+
+    return {
+        printNewRound,
+        playRound,
+    }
 }
 
 
 // Put the game into a factory function for code cleanliness
 
-const testGame = Gameboard();
+// const testGame = Gameboard();
 
 const game = GameController();
