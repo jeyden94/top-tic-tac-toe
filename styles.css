@@ -1,0 +1,47 @@
+body {
+    background: radial-gradient(circle, #22499C, #00277A 50vh);
+    height: 95vh;
+    overflow: auto;
+    display: flex;
+    font-family: 'Saira', sans-serif;
+    color: white;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+h1 {
+    font-family: 'Saira', sans-serif;
+    font-weight: 400;
+}
+
+.board {
+    font-family: 'Saira', sans-serif;
+    display: grid;
+    height: 500px;
+    width: 500px;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    border: 1px solid black;
+    gap: 2px;
+    padding: 2px;
+    background-color: rgb(136, 150, 178);
+}
+
+.cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 2rem;
+    cursor: pointer;
+    background-color: rgb(45, 73, 129);
+    border: 1px solid rgb(18, 37, 74);
+    padding: 3vh 4vh;
+    user-select: none;
+}
+
+.cell:hover {
+    opacity: 0.8;
+    cursor: pointer;   
+}
