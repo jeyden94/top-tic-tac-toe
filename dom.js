@@ -193,6 +193,7 @@ function GameController(
         checkForEndGame,
         getActivePlayer,
         getBoard: board.getBoard,
+        GameController,
     }
 }
 
@@ -247,7 +248,6 @@ function GameScreenController() {
             boardDiv.appendChild(cellButton);
         })
         })
-
     }
 
     // Add event listener for the board
@@ -269,17 +269,22 @@ function GameScreenController() {
     // We don't need to return anything from this module because everything is encapsulated inside this screen controller.
     return {
         updateScreen,
+        GameController,
     }
 }
 
 function LaunchScreenController() {
+    
+    
     // const gameStart = GameScreenController();
-       
+    const launch = GameScreenController();
+    
     const menuContainer = document.querySelector(".menu-container");
     
     const gameTitle = document.createElement("h1")
     const playerNameForm = document.createElement("form")
     const launchButton = document.createElement("button")
+    launchButton.classList.add("start-btn")
 
     menuContainer.appendChild(gameTitle);
     menuContainer.appendChild(playerNameForm);
@@ -287,8 +292,13 @@ function LaunchScreenController() {
 
     const playerOneNameLabel = document.createElement("label")
     const playerOneNameInput = document.createElement("input")
+    playerOneNameInput.setAttribute("type","text")
+    playerOneNameInput.setAttribute("placeholder","Player One")
+
     const playerTwoNameLabel = document.createElement("label")
     const playerTwoNameInput = document.createElement("input")
+    playerTwoNameInput.setAttribute("type","text")
+    playerTwoNameInput.setAttribute("placeholder","Player Two")
 
     playerNameForm.appendChild(playerOneNameLabel);
     playerNameForm.appendChild(playerOneNameInput);
@@ -297,25 +307,22 @@ function LaunchScreenController() {
 
     const showMenu = () => {
         // Add game title text
-        gameTitle.textContent = "Tic Tac Toe"
 
+        gameTitle.textContent = "Tic Tac Toe"
         playerOneNameLabel.textContent = "Player One Name"
         playerTwoNameLabel.textContent = "Player Two Name"
         launchButton.textContent = "Start Game"
     }
 
-    // Add event listener for the board
-    // function clickHandlerBoard(e) {
-    //     const selectedColumn = e.target.dataset.column;
-    //     const selectedRow = e.target.dataset.row;
-    //     // Make sure I've clicked a column and not the gaps in between
-    //     if (!selectedColumn) return;
-    //     if (!selectedRow) return;
-        
-    //     game.playRound(selectedRow, selectedColumn);
-    //     updateScreen();
-    // }
-    // boardDiv.addEventListener("click", clickHandlerBoard);
+    // Add event listener for the start button
+    function clickHandlerStart(e) {
+        const playerOneName = playerOneNameInput.value;
+        const playerTwoName = playerOneNameInput.value;
+
+        GameScreenController();
+        launch.GameController(playerOneName, playerTwoName);
+    }
+    launchButton.addEventListener("click", clickHandlerStart);
 
     // Initial render
     showMenu();
