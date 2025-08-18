@@ -108,7 +108,9 @@ function GameController(
     playerOneName = "Player One",
     playerTwoName = "Player Two"
 ) {
-    let round = 0;
+    let round = 0; // One round for each square 1-9
+    let status = 0; // If 0, no winner or tie; If 1, Player 2 has won; If 2, Player 3 has won.
+    let winner = "hi";
 
     const players = [
         {
@@ -120,6 +122,9 @@ function GameController(
             marker: "O",
         }
     ]
+
+    console.log(`${players[0].name}`)
+    console.log(`${players[1].name}`)
 
     const board = Gameboard();
 
@@ -141,13 +146,34 @@ function GameController(
         board.addMarker(row, col, marker);
         round++;
         console.log(`${getActivePlayer().name} plays row ${row}, column ${col}.`);
-        checkForEndGame();
+        status = checkForEndGame(status);
+
+        console.log(round)
+        console.log(status)
+
+        if (status === 2) {
+            console.log(`${players[0].name} Wins!`)
+            winner = `${players[0].name}`
+            board.printBoard();
+            return winner;
+        } else if (status === 1) {
+            console.log(`${players[1].name} Wins!`)
+            winner = `${players[1].name}`
+            board.printBoard();
+            return winner;
+        } else if (status === 0 && round === 9) {
+            winner = "tie"
+            console.log("It's a tie!")
+            board.printBoard();
+            return winner;
+        } else {
+            return winner;
+        }
     }
 
     printNewRound();
 
-    const checkForEndGame = () => {
-        let status = 0;
+    const checkForEndGame = (status) => {
 
         let winningCombinations = [
             [1,2,3],
@@ -164,63 +190,75 @@ function GameController(
             let status = board.checkForWin(winningCombinations[i]);
       
             if (status === 2) {
-                console.log(`${players[0].name} Wins!`)
+                // console.log(`${players[0].name} Wins!`)
                 board.printBoard();
-                return;
+                return status;
             }
         
             if (status === 1) {
-                console.log(`${players[1].name} Wins!`)
+                // console.log(`${players[1].name} Wins!`)
                 board.printBoard();
-                return;
+                return status;
             }
         }
 
         if (status === 0 && round === 9) {
-            console.log("It's a tie!")
+            // console.log("It's a tie!")
             board.printBoard();
-            return;
+            return status;
         }
 
         switchActivePlayer();
         printNewRound();
-    
+        return status;
     }
 
     return {
+        winner,
+        players,
         printNewRound,
         playRound,
         checkForEndGame,
         getActivePlayer,
         getBoard: board.getBoard,
-        GameController,
+        // GameController,
     }
 }
 
 // const game = GameController();
 
-function GameScreenController() {
-    const game = GameController();
-    
+function GameScreenController(
+    playerOneName = "Player One",
+    playerTwoName = "Player Two"  
+) {
+    const game = GameController(playerOneName, playerTwoName);
+
     const boardDiv = document.createElement("div")
     boardDiv.classList.add("board");
     
     const playerTurnDiv = document.createElement("h1");
     playerTurnDiv.classList.add("turn");
-
     
+    const playAgainButton = document.createElement("button");
+    playAgainButton.classList.add("play-again-btn");
+
     const gameContainer = document.querySelector('.game-container');
     
     gameContainer.appendChild(playerTurnDiv);
     gameContainer.appendChild(boardDiv);
+    
+    console.log(game.winner)
 
-
+    if (game.winner === "tie") {
+        console.log("hello")
+    }
     // const boardDivSelector = document.querySelector('.board');
 
-    const updateScreen = () => {
+    const updateScreen = (winner) => {
         // clear the board
+       
         boardDiv.textContent = "";
-
+        
         // get the newest version of the board and player turn
         const board = game.getBoard();
         const activePlayer = game.getActivePlayer();
@@ -231,23 +269,41 @@ function GameScreenController() {
         // Render board squares
         let counter = 0;
         board.forEach(row => {
-        row.forEach((cell, index) => {
-            // Anything clickable should be a button!!
-            counter++;
-            const cellButton = document.createElement("button");
-            cellButton.classList.add("cell");
-            // Create a data attribute to identify the column
-            // This makes it easier to pass into our `playRound` function 
-            if (counter < 4) {
-                cellButton.dataset.row = 1;
-            } else if (counter < 7) {
-                cellButton.dataset.row = 2;
-            } else {cellButton.dataset.row = 3;}
-            cellButton.dataset.column = index + 1;
-            cellButton.textContent = cell.getValue();
-            boardDiv.appendChild(cellButton);
-        })
-        })
+            row.forEach((cell, index) => {
+                // Anything clickable should be a button!!
+                counter++;
+                const cellButton = document.createElement("button");
+                cellButton.classList.add("cell");
+                // Create a data attribute to identify the column
+                // This makes it easier to pass into our `playRound` function 
+                    if (counter < 4) {
+                        cellButton.dataset.row = 1;
+                    } else if (counter < 7) {
+                        cellButton.dataset.row = 2;
+                    } else {cellButton.dataset.row = 3;}
+                cellButton.dataset.column = index + 1;
+                cellButton.textContent = cell.getValue();
+                boardDiv.appendChild(cellButton);
+            });
+        });
+
+
+        if (winner === "tie") {
+            playerTurnDiv.textContent = "It's a tie!"
+            endGameFlow();
+        }
+
+        if (winner === `${game.players[0].name}` || winner === `${game.players[1].name}`) {
+            playerTurnDiv.textContent = `${winner} wins!`
+            endGameFlow();
+        }
+       
+    }
+
+    function endGameFlow() {
+        boardDiv.removeEventListener("click", clickHandlerBoard);
+        gameContainer.appendChild(playAgainButton);
+        playAgainButton.textContent = "Play Again?"
     }
 
     // Add event listener for the board
@@ -258,10 +314,18 @@ function GameScreenController() {
         if (!selectedColumn) return;
         if (!selectedRow) return;
         
-        game.playRound(selectedRow, selectedColumn);
-        updateScreen();
+        winner = game.playRound(selectedRow, selectedColumn);
+        updateScreen(winner);
     }
     boardDiv.addEventListener("click", clickHandlerBoard);
+
+    function clickHandlerAgain(e) {
+        gameContainer.removeChild(playerTurnDiv);
+        gameContainer.removeChild(boardDiv);
+        gameContainer.removeChild(playAgainButton);
+        GameScreenController(playerOneName,playerTwoName);
+    }
+    playAgainButton.addEventListener("click", clickHandlerAgain);
 
     // Initial render
     updateScreen();
@@ -269,16 +333,14 @@ function GameScreenController() {
     // We don't need to return anything from this module because everything is encapsulated inside this screen controller.
     return {
         updateScreen,
-        GameController,
+        // GameController,
     }
 }
 
 function LaunchScreenController() {
     
-    
-    // const gameStart = GameScreenController();
-    const launch = GameScreenController();
-    
+
+
     const menuContainer = document.querySelector(".menu-container");
     
     const gameTitle = document.createElement("h1")
@@ -293,12 +355,12 @@ function LaunchScreenController() {
     const playerOneNameLabel = document.createElement("label")
     const playerOneNameInput = document.createElement("input")
     playerOneNameInput.setAttribute("type","text")
-    playerOneNameInput.setAttribute("placeholder","Player One")
+    playerOneNameInput.setAttribute("value","Player One")
 
     const playerTwoNameLabel = document.createElement("label")
     const playerTwoNameInput = document.createElement("input")
     playerTwoNameInput.setAttribute("type","text")
-    playerTwoNameInput.setAttribute("placeholder","Player Two")
+    playerTwoNameInput.setAttribute("value","Player Two")
 
     playerNameForm.appendChild(playerOneNameLabel);
     playerNameForm.appendChild(playerOneNameInput);
@@ -306,8 +368,6 @@ function LaunchScreenController() {
     playerNameForm.appendChild(playerTwoNameInput);
 
     const showMenu = () => {
-        // Add game title text
-
         gameTitle.textContent = "Tic Tac Toe"
         playerOneNameLabel.textContent = "Player One Name"
         playerTwoNameLabel.textContent = "Player Two Name"
@@ -316,13 +376,19 @@ function LaunchScreenController() {
 
     // Add event listener for the start button
     function clickHandlerStart(e) {
+        hideMenu();
         const playerOneName = playerOneNameInput.value;
-        const playerTwoName = playerOneNameInput.value;
+        const playerTwoName = playerTwoNameInput.value;
 
-        GameScreenController();
-        launch.GameController(playerOneName, playerTwoName);
+        GameScreenController(playerOneName,playerTwoName);
     }
     launchButton.addEventListener("click", clickHandlerStart);
+
+    const hideMenu = () => {
+        menuContainer.removeChild(gameTitle);
+        menuContainer.removeChild(playerNameForm);
+        menuContainer.removeChild(launchButton);    
+    }
 
     // Initial render
     showMenu();
