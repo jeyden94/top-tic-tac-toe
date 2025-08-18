@@ -198,10 +198,23 @@ function GameController(
 
 // const game = GameController();
 
-function ScreenController() {
+function GameScreenController() {
     const game = GameController();
-    const playerTurnDiv = document.querySelector('.turn');
-    const boardDiv = document.querySelector('.board');
+    
+    const boardDiv = document.createElement("div")
+    boardDiv.classList.add("board");
+    
+    const playerTurnDiv = document.createElement("h1");
+    playerTurnDiv.classList.add("turn");
+
+    
+    const gameContainer = document.querySelector('.game-container');
+    
+    gameContainer.appendChild(playerTurnDiv);
+    gameContainer.appendChild(boardDiv);
+
+
+    // const boardDivSelector = document.querySelector('.board');
 
     const updateScreen = () => {
         // clear the board
@@ -254,9 +267,68 @@ function ScreenController() {
     updateScreen();
 
     // We don't need to return anything from this module because everything is encapsulated inside this screen controller.
+    return {
+        updateScreen,
+    }
 }
 
-ScreenController();
+function LaunchScreenController() {
+    // const gameStart = GameScreenController();
+       
+    const menuContainer = document.querySelector(".menu-container");
+    
+    const gameTitle = document.createElement("h1")
+    const playerNameForm = document.createElement("form")
+    const launchButton = document.createElement("button")
+
+    menuContainer.appendChild(gameTitle);
+    menuContainer.appendChild(playerNameForm);
+    menuContainer.appendChild(launchButton);
+
+    const playerOneNameLabel = document.createElement("label")
+    const playerOneNameInput = document.createElement("input")
+    const playerTwoNameLabel = document.createElement("label")
+    const playerTwoNameInput = document.createElement("input")
+
+    playerNameForm.appendChild(playerOneNameLabel);
+    playerNameForm.appendChild(playerOneNameInput);
+    playerNameForm.appendChild(playerTwoNameLabel);
+    playerNameForm.appendChild(playerTwoNameInput);
+
+    const showMenu = () => {
+        // Add game title text
+        gameTitle.textContent = "Tic Tac Toe"
+
+        playerOneNameLabel.textContent = "Player One Name"
+        playerTwoNameLabel.textContent = "Player Two Name"
+        launchButton.textContent = "Start Game"
+    }
+
+    // Add event listener for the board
+    // function clickHandlerBoard(e) {
+    //     const selectedColumn = e.target.dataset.column;
+    //     const selectedRow = e.target.dataset.row;
+    //     // Make sure I've clicked a column and not the gaps in between
+    //     if (!selectedColumn) return;
+    //     if (!selectedRow) return;
+        
+    //     game.playRound(selectedRow, selectedColumn);
+    //     updateScreen();
+    // }
+    // boardDiv.addEventListener("click", clickHandlerBoard);
+
+    // Initial render
+    showMenu();
+
+    // We don't need to return anything from this module because everything is encapsulated inside this screen controller.
+}
+
+LaunchScreenController();
+
+
+
+
+
 
 // Debugging -- Tie Scenario
 

@@ -3,7 +3,7 @@ body {
     height: 95vh;
     overflow: auto;
     display: flex;
-    font-family: 'Saira', sans-serif;
+    font-family: "JetBrains Mono",monospace;
     color: white;
     flex-direction: column;
     justify-content: center;
@@ -11,12 +11,86 @@ body {
 }
 
 h1 {
-    font-family: 'Saira', sans-serif;
-    font-weight: 400;
+    font-weight: 800;
+    text-align: center;
+}
+
+form {
+    padding: 20px;
+    display: grid;
+    width: 300px;
+    border: 0;
+    border: 0;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 1.3rem;
+}
+
+form label {
+    font-weight: 500;
+    text-align: center;
+}
+
+form input {
+    margin-top: 12px;
+    margin-bottom: 24px;
+    border: 1px solid grey;
+    border-radius: 100px;
+    font-family: "JetBrains Mono",monospace;
+    font-size: 18px;
+    padding: 14px;
+}
+
+
+
+button {
+    place-self: center;
+    align-items: center;
+    appearance: none;
+    background-image: radial-gradient(100% 100% at 100% 0, #5adaff 0, #5468ff 100%);
+    border: 0;
+    border-radius: 6px;
+    box-shadow: rgba(45, 35, 66, .4) 0 2px 4px,rgba(45, 35, 66, .3) 0 7px 13px -3px,rgba(58, 65, 111, .5) 0 -3px 0 inset;
+    box-sizing: border-box;
+    color: #fff;
+    cursor: pointer;
+    display: inline-flex;
+    font-family: "JetBrains Mono",monospace;
+    height: 42px;
+    justify-content: center;
+    line-height: 1;
+    list-style: none;
+    overflow: hidden;
+    padding-left: 16px;
+    padding-right: 16px;
+    position: relative;
+    text-align: left;
+    text-decoration: none;
+    transition: box-shadow .15s,transform .15s;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    white-space: nowrap;
+    will-change: box-shadow,transform;
+    font-size: 18px; 
+}
+
+
+button:hover {
+  box-shadow: rgba(45, 35, 66, .4) 0 4px 8px, rgba(45, 35, 66, .3) 0 7px 13px -3px, #3c4fe0 0 -3px 0 inset;
+  transform: translateY(-2px);
+}
+
+button:active {
+  box-shadow: #3c4fe0 0 3px 7px inset;
+  transform: translateY(2px);
+}
+
+.menu-container {
+    display: grid;
 }
 
 .board {
-    font-family: 'Saira', sans-serif;
     display: grid;
     height: 500px;
     width: 500px;
