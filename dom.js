@@ -185,20 +185,17 @@ function GameController(playerOneName, playerTwoName) {
             let status = board.checkForWin(winningCombinations[i]);
       
             if (status === 2) {
-                // console.log(`${players[0].name} Wins!`)
                 board.printBoard();
                 return status;
             }
         
             if (status === 1) {
-                // console.log(`${players[1].name} Wins!`)
                 board.printBoard();
                 return status;
             }
         }
 
         if (status === 0 && round === 9) {
-            // console.log("It's a tie!")
             board.printBoard();
             return status;
         }
@@ -230,13 +227,14 @@ function GameScreenController(playerOneName, playerTwoName) {
     // Create game container to replace menu container
     const gameContainer = document.querySelector('.game-container');
 
-    // Create new child divs for the game container, add classes for styling
+    // Create new child divs for the game container, add classes for styling, and text to play again btn
     const boardDiv = document.createElement("div")
     boardDiv.classList.add("board");
     const playerTurnDiv = document.createElement("h1");
     playerTurnDiv.classList.add("turn");
     const playAgainButton = document.createElement("button");
     playAgainButton.classList.add("play-again-btn");
+    playAgainButton.textContent = "Play Again?"
 
     // Append new children, excluding the play again
     gameContainer.appendChild(playerTurnDiv);
@@ -258,7 +256,7 @@ function GameScreenController(playerOneName, playerTwoName) {
         let currentCell = 0; // Current cell tracker to assign row numbers and columns
         board.forEach(row => {
             row.forEach((cell, index) => {
-                
+
                 // Increment cell tracker by 1
                 currentCell++;
 
@@ -283,6 +281,8 @@ function GameScreenController(playerOneName, playerTwoName) {
             });
         });
 
+        // After rendering the board, check for a winner, announce, 
+        // and if we need to freeze the board for end-state, run the proper function
         if (winner === `${game.players[0].name}` || winner === `${game.players[1].name}`) {
             playerTurnDiv.textContent = `${winner} wins!`
             endGameFlow();
@@ -293,10 +293,12 @@ function GameScreenController(playerOneName, playerTwoName) {
        
     }
 
+    // This function handles freezing the board and appnending our play again button
     function endGameFlow() {
+        
         boardDiv.removeEventListener("click", clickHandlerBoard);
         gameContainer.appendChild(playAgainButton);
-        playAgainButton.textContent = "Play Again?"
+
     }
 
     // Add event listener for the board
@@ -307,27 +309,27 @@ function GameScreenController(playerOneName, playerTwoName) {
         if (!selectedColumn) return;
         if (!selectedRow) return;
         
+        // When I play round at the selected row and column, pass back the result to determine if we need to announce a winner
         winner = game.playRound(selectedRow, selectedColumn);
+
+        // Update the screen, passing this returned winner variable
         updateScreen(winner);
     }
     boardDiv.addEventListener("click", clickHandlerBoard);
 
-    function clickHandlerAgain(e) {
+    // Function that removes the old board before populating a new one
+    function clickHandlerPlayAgain() {
+
         gameContainer.removeChild(playerTurnDiv);
         gameContainer.removeChild(boardDiv);
         gameContainer.removeChild(playAgainButton);
         GameScreenController(playerOneName,playerTwoName);
+
     }
-    playAgainButton.addEventListener("click", clickHandlerAgain);
+    playAgainButton.addEventListener("click", clickHandlerPlayAgain);
 
     // Initial render
     updateScreen();
-
-    // We don't need to return anything from this module because everything is encapsulated inside this screen controller.
-    return {
-        updateScreen,
-        // GameController,
-    }
 }
 
 function LaunchScreenController() {
